@@ -2,17 +2,25 @@ import express, { Application } from "express";
 import next from "next";
 import userRoutes from "../routes/usuario";
 import cors from "cors";
+import mysqlDB from "./mysql";
+import { ConnectDB, CreateTables } from "./database";
+import { createTableMysql } from "./querys/mysql/createTables";
+import routeMueble from "../routes/mueble";
+import fileUpload from "express-fileupload"
 
 class Server {
 	private app: Application;
 	private port: string;
 	private apiPaths = {
 		usuarios: "/api/usuarios",
+		mueble: "/api/v1/mueble",
 	};
 
 	constructor() {
 		this.app = express();
 		this.port = process.env.PORT || "8000";
+
+		this.connectDB();
 
 		this.middlewares();
 		//Defined routes
@@ -32,10 +40,31 @@ class Server {
 
 		//Carpeta publica
 		this.app.use(express.static("public/static"));
+		this.app.use(fileUpload())
+	}
+
+	connectDB() {
+		const createTable = (ct: CreateTables) => {
+			ct.executeMethods();
+		};
+		switch (process.env.USEDB) {
+			case "MySQL":
+				ConnectDB(new mysqlDB()).then((res) => {
+					console.log(res);
+					createTable(createTableMysql);
+				});
+				break;
+			case "SQLite":
+				console.log("usando sqlite");
+				break;
+			default:
+				break;
+		}
 	}
 
 	routes() {
 		this.app.use(this.apiPaths.usuarios, userRoutes);
+		this.app.use(this.apiPaths.mueble, routeMueble);
 	}
 
 	private setupNext() {

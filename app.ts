@@ -6,3 +6,5 @@ const server = new Server();
 
 //server.listen();
 server.start();
+
+export const pathProyect = __dirname;
