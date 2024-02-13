@@ -35,6 +35,7 @@ export interface QuerysMueble {
 		path_3d: string,
 		callback: CallbackQuery
 	) => void;
+	GetColor: (callback: CallbackQuery) => void;
 }
 
 export interface ApiResponse {

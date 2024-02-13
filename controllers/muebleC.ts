@@ -60,7 +60,7 @@ export function PostColor(req: Request, res: Response) {
 	const color: Color = {
 		nombre: body.nombre ?? "",
 		path_muestra: img
-			? path.join(pathProyect, "uploads", "colors", name)
+			? path.join(name) //tenia que ser asi: path.join(pathProyect, "uploads", "colors", name)
 			: "",
 	};
 	qm.InsertColor(color, async (err) => {
@@ -77,7 +77,11 @@ export function PostColor(req: Request, res: Response) {
 			await saveColorImg(req)
 				.then((value) => {
 					if (value) {
-						res.sendStatus(200);
+						let r: ApiResponse = {
+							mensaje: "Se subio correctamente",
+							status: 200,
+						};
+						res.send(r).status(r.status);
 					} else {
 						let r: ApiResponse = {
 							mensaje: "Error al guardar el archivo",
@@ -170,4 +174,19 @@ export function PutMuebleModel3D(req: Request, res: Response) {
 			r.mensaje = "Error al guardar el modelo";
 			res.send(r).status(r.status);
 		});
+}
+
+export function GetColorC(req: Request, res: Response) {
+	let r: ApiResponse = {
+		status: 404,
+		mensaje: "Error al obtener colores",
+	};
+	qm.GetColor((err, result) => {
+		if (!err) {
+			r.status = 200;
+			r.mensaje = "datos obtenidos correctamente";
+			r.body = result;
+		}
+		res.send(r).status(r.status);
+	});
 }

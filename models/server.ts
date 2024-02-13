@@ -1,4 +1,4 @@
-import express, { Application } from "express";
+import express, { Application, Request, Response } from "express";
 import next from "next";
 import userRoutes from "../routes/usuario";
 import cors from "cors";
@@ -6,7 +6,11 @@ import mysqlDB from "./mysql";
 import { ConnectDB, CreateTables } from "./database";
 import { createTableMysql } from "./querys/mysql/createTables";
 import routeMueble from "../routes/mueble";
-import fileUpload from "express-fileupload"
+import fileUpload from "express-fileupload";
+import { pathProyect } from "../app";
+
+import path from "path";
+import fs from "fs";
 
 class Server {
 	private app: Application;
@@ -40,7 +44,7 @@ class Server {
 
 		//Carpeta publica
 		this.app.use(express.static("public/static"));
-		this.app.use(fileUpload())
+		this.app.use(fileUpload());
 	}
 
 	connectDB() {
@@ -65,6 +69,27 @@ class Server {
 	routes() {
 		this.app.use(this.apiPaths.usuarios, userRoutes);
 		this.app.use(this.apiPaths.mueble, routeMueble);
+		this.app.get("/uploads/color", (req: Request, res: Response) => {
+			let body = req.query?.path_muestra;
+			if (typeof body == "string") {
+				let path_muestra: string = body ?? "";
+				let p = path.join(
+					pathProyect,
+					"uploads",
+					"colors",
+					path_muestra
+				);
+				if (fs.existsSync(p)) {
+					res.sendFile(p);
+				} else {
+					res.sendStatus(404);
+				}
+			} else {
+				res.send({
+					message: "query no aceptable",
+				}).status(413);
+			}
+		});
 	}
 
 	private setupNext() {

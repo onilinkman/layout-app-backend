@@ -63,4 +63,12 @@ export class MuebleMysql implements QuerysMueble {
 			callback(err, result, fields);
 		});
 	}
+
+	GetColor(callback: CallbackQuery) {
+		let db: Connection | undefined = GetDB();
+		let query: string = `SELECT id_color,nombre,path_muestra FROM color;`;
+		db?.execute(query, (err, result, fields) => {
+			callback(err, result, fields);
+		});
+	}
 }
