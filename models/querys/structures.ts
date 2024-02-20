@@ -10,6 +10,16 @@ export interface Mueble {
 	path_3d?: string;
 }
 
+export interface MuebleAndImages {
+	id_mueble: number;
+	nombre: string;
+	description: string;
+	medidas: string;
+	precio: number;
+	path_3d: string;
+	path_img: string;
+}
+
 export interface Color {
 	id_color?: number;
 	nombre?: string;
@@ -19,7 +29,7 @@ export interface Color {
 export interface MuebleHasColor {
 	id_mueble: number;
 	id_color: number;
-	path_img: string;
+	path_img?: string;
 }
 
 export interface CallbackQuery {
@@ -36,6 +46,7 @@ export interface QuerysMueble {
 		callback: CallbackQuery
 	) => void;
 	GetColor: (callback: CallbackQuery) => void;
+	GetAllMuebleAndImgByIdMueble: (id_color:number, callback: CallbackQuery) => void;
 }
 
 export interface ApiResponse {

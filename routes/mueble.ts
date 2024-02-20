@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+	GetAllMuebleAndImage,
 	GetColorC,
 	PostColor,
 	PostMueble,
@@ -14,5 +15,6 @@ routeMueble.post("/addColor", PostColor);
 routeMueble.post("/addMuebleColor", PostMuebleHasColor);
 routeMueble.put("/put3D", PutMuebleModel3D);
 routeMueble.get("/", GetColorC);
+routeMueble.post("/getAllMuebleAndImage",GetAllMuebleAndImage)
 
 export default routeMueble;

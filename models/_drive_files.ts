@@ -56,16 +56,17 @@ export const saveImgMueble: (
 		let ext = name.split(".");
 		let type: string = ext[ext.length - 1];
 		if (formatImg.includes(type)) {
-			let dir: string = createDir("uploads", id_mueble + "");
+			let dir: string = createDir("public", "static", id_mueble + "");
 			await img
 				.mv(path.join(dir, name))
 				.then((value) => {
 					ret.isSave = true;
-					ret.mensaje = path.join(dir, name);
+					ret.mensaje = path.join(name);
 				})
-				.catch((err) => {
+				.catch((err: Error) => {
 					ret.isSave = false;
-					ret.mensaje = "hubo un error al guardar la imagen";
+					ret.mensaje =
+						"hubo un error al guardar la imagen " + err?.message;
 				});
 		} else {
 			ret.isSave = false;
@@ -95,7 +96,7 @@ export const saveModel3d: (
 				.mv(path.join(dir, name))
 				.then((value) => {
 					ret.isSave = true;
-					ret.mensaje = path.join(dir, name);
+					ret.mensaje = name;
 				})
 				.catch((err) => {
 					ret.isSave = false;

@@ -7,7 +7,7 @@ import { ConnectDB, CreateTables } from "./database";
 import { createTableMysql } from "./querys/mysql/createTables";
 import routeMueble from "../routes/mueble";
 import fileUpload from "express-fileupload";
-import { pathProyect } from "../app";
+import { dirPublic, pathProyect } from "../app";
 
 import path from "path";
 import fs from "fs";
@@ -43,7 +43,7 @@ class Server {
 		this.app.use(express.json());
 
 		//Carpeta publica
-		this.app.use(express.static("public/static"));
+		this.app.use(express.static(dirPublic));
 		this.app.use(fileUpload());
 	}
 
@@ -88,6 +88,25 @@ class Server {
 				res.send({
 					message: "query no aceptable",
 				}).status(413);
+			}
+		});
+		this.app.get("/uploads/3d", (req: Request, res: Response) => {
+			let id_mueble = req.query?.id;
+			let name = req.query?.name;
+			if (id_mueble && name) {
+				let p = path.join(
+					pathProyect,
+					"uploads",
+					id_mueble + "",
+					name + ""
+				);
+				if (fs.existsSync(p)) {
+					res.sendFile(p);
+				} else {
+					res.sendStatus(404);
+				}
+			} else {
+				res.sendStatus(406);
 			}
 		});
 	}

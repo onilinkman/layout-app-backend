@@ -1,11 +1,4 @@
-import {
-	Connection,
-	FieldPacket,
-	ProcedureCallPacket,
-	QueryError,
-	ResultSetHeader,
-	RowDataPacket,
-} from "mysql2";
+import { Connection } from "mysql2";
 import { GetDB } from "../../database";
 import {
 	CallbackQuery,
@@ -68,6 +61,18 @@ export class MuebleMysql implements QuerysMueble {
 		let db: Connection | undefined = GetDB();
 		let query: string = `SELECT id_color,nombre,path_muestra FROM color;`;
 		db?.execute(query, (err, result, fields) => {
+			callback(err, result, fields);
+		});
+	}
+
+	GetAllMuebleAndImgByIdMueble(id_color: number, callback: CallbackQuery) {
+		let db: Connection | undefined = GetDB();
+		let query: string = `SELECT m.id_mueble, m.nombre, m.description,m.medidas,
+		m.precio,m.path_3d, mhc.path_img
+		FROM mueble m
+		LEFT JOIN mueble_has_color mhc ON m.id_mueble=mhc.id_mueble
+		WHERE m.estado=1 AND (mhc.id_color=? OR ? = 0);`;
+		db?.execute(query, [id_color, id_color], (err, result, fields) => {
 			callback(err, result, fields);
 		});
 	}

@@ -190,3 +190,47 @@ export function GetColorC(req: Request, res: Response) {
 		res.send(r).status(r.status);
 	});
 }
+/**
+ * if id_color is 0, return all colors
+ * @param req
+ * @param res
+ */
+export function GetAllMuebleAndImage(req: Request, res: Response) {
+	let r: ApiResponse = {
+		status: 404,
+		mensaje: "Error al obtener datos",
+	};
+	let body = req.body;
+	let id_color = parseInt(body.id_color);
+	if (id_color || id_color === 0) {
+		qm.GetAllMuebleAndImgByIdMueble(id_color, (err, rows) => {
+			if (err) {
+				r.status = 404;
+				r.mensaje =
+					"Error al obtener datos de la base de datos " + err.message;
+				res.send(r).status(r.status);
+			} else {
+				qm.GetColor((err2, result) => {
+					if (err2) {
+						r.status = 404;
+						r.mensaje =
+							"Error al obtener datos de la base de datos al obtener colores" +
+							err2.message;
+					} else {
+						r.status = 200;
+						r.body = {
+							muebles: rows,
+							colors: result,
+						};
+						r.mensaje = "Se obtuvieron los datos Correctamente";
+					}
+					res.send(r).status(r.status);
+				});
+			}
+		});
+	} else {
+		r.status = 406;
+		r.mensaje = "id_color debe tener un dato";
+		res.send(r).status(406);
+	}
+}
